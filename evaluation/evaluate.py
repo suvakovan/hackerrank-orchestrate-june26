@@ -2,11 +2,11 @@ import pandas as pd
 import os
 import sys
 
-# Add root to python path to import code.config if necessary
+# Add root to python path to import config
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(BASE_DIR)
+sys.path.append(os.path.join(BASE_DIR, "code"))
 
-from code.config import OUTPUT_CSV, SAMPLE_CLAIMS_CSV
+from config import OUTPUT_CSV, SAMPLE_CLAIMS_CSV
 
 def evaluate():
     if not os.path.exists(OUTPUT_CSV):

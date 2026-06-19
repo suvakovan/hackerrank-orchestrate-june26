@@ -1,7 +1,7 @@
 import time
 import json
-from code.utils import log_llm_call
-from code.config import USE_MOCK
+from utils import log_llm_call
+from config import USE_MOCK
 
 def analyze_images(image_paths, expected_object=None):
     """
