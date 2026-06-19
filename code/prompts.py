@@ -1,7 +1,7 @@
 CLAIM_EXTRACTION_PROMPT = """
 You are an expert claims processor. Given a conversation between a customer and support, extract the core claim information.
 
-Return EXACTLY a JSON object with the following keys:
+Return EXACTLY a valid JSON object with the following keys (no markdown wrapping, no extra text):
 - "issue_type": The type of damage or issue (e.g., "scratch", "dent", "crack", "broken_part", "stain", "water_damage", "crushed_packaging", "torn_packaging")
 - "object_part": The specific part that is damaged (e.g., "door", "front_bumper", "screen", "keyboard", "hinge", "package_corner", "seal")
 - "claim_object": The main object (e.g., "car", "laptop", "package")
@@ -9,7 +9,7 @@ Return EXACTLY a JSON object with the following keys:
 Conversation:
 {conversation}
 
-Output ONLY valid JSON.
+(Developer Note: In production, this prompt uses response_format=json_object or instructor Pydantic models to guarantee valid parsing.)
 """
 
 IMAGE_ANALYSIS_PROMPT = """
