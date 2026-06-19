@@ -4,6 +4,7 @@ import re
 from utils import log_llm_call
 from config import USE_MOCK
 from prompts import CLAIM_EXTRACTION_PROMPT
+from mock_db import get_mock_claim
 
 def extract_claim(conversation, claim_object):
     """
@@ -16,38 +17,20 @@ def extract_claim(conversation, claim_object):
     if USE_MOCK:
         # Mocking LLM using heuristics
         time.sleep(0.05)
+        # Check mock db
+        mock_data = get_mock_claim(conversation)
+        if mock_data:
+            result = {
+                "issue_type": mock_data.get("issue_type", "unknown"),
+                "object_part": mock_data.get("object_part", "unknown"),
+                "claim_object": mock_data.get("claim_object", "unknown")
+            }
+            time_taken = time.time() - start_time
+            log_llm_call(prompt, json.dumps(result), time_taken)
+            return result
+
+        # Fallback Heuristics
         text_lower = conversation.lower()
-        
-        # Heuristics for damage type
-        if "dent" in text_lower:
-            issue_type = "dent"
-        elif "scratch" in text_lower or "scrape" in text_lower:
-            issue_type = "scratch"
-        elif "crack" in text_lower or "shatter" in text_lower:
-            issue_type = "crack"
-        elif "broke" in text_lower or "missing" in text_lower:
-            issue_type = "broken_part"
-        elif "stain" in text_lower or "spill" in text_lower:
-            issue_type = "stain"
-        elif "water" in text_lower or "wet" in text_lower:
-            issue_type = "water_damage"
-        elif "crush" in text_lower:
-            issue_type = "crushed_packaging"
-        elif "torn" in text_lower or "open" in text_lower:
-            issue_type = "torn_packaging"
-        else:
-            issue_type = "unknown"
-            
-        # Heuristics for object part
-        if "bumper" in text_lower:
-            if "rear" in text_lower or "back" in text_lower:
-                object_part = "rear_bumper"
-            else:
-                object_part = "front_bumper"
-        elif "windshield" in text_lower or "glass" in text_lower:
-            object_part = "windshield"
-        elif "door" in text_lower:
-            object_part = "door"
         elif "mirror" in text_lower:
             object_part = "side_mirror"
         elif "headlight" in text_lower:
